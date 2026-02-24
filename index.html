@@ -6,57 +6,79 @@
     <title>UTC Nuet-Generator</title>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f0f0f0; margin: 0; }
-        .container { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; }
-        .utc-display { font-family: monospace; color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
-        .result { font-size: 3rem; font-weight: bold; color: #2c3e50; margin: 1rem 0; }
-        button { background: #3498db; color: white; border: none; padding: 1rem 2rem; border-radius: 0.5rem; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; }
-        button:active { background: #2980b9; transform: scale(0.98); }
+        .container { background: white; padding: 2rem; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 85%; max-width: 400px; }
+        .utc-display { font-family: monospace; color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; letter-spacing: 0.5px; }
+        .result { font-size: 4rem; font-weight: bold; color: #2c3e50; margin: 0.5rem 0; }
+        
+        /* Reglagen inuti boxen */
+        .controls { margin: 1.5rem 0; display: flex; gap: 15px; justify-content: center; }
+        .control-group { text-align: left; }
+        .control-group label { display: block; font-size: 0.7rem; color: #666; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        .control-group input { width: 60px; padding: 8px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; text-align: center; }
+        
+        button { background: #3498db; color: white; border: none; padding: 1.2rem 2rem; border-radius: 1rem; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s; width: 100%; margin-top: 10px; }
+        button:active { background: #2980b9; transform: scale(0.96); }
+        .note { font-size: 0.75rem; color: #aaa; margin-top: 1.5rem; line-height: 1.4; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="utc-clock" class="utc-display">Laddar UTC...</div>
+    <div id="utc-clock" class="utc-display">Initierar UTC...</div>
+    
     <div id="result" class="result">?</div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Min</label>
+            <input type="number" id="min-val" value="1">
+        </div>
+        <div class="control-group">
+            <label>Max</label>
+            <input type="number" id="max-val" value="64">
+        </div>
+    </div>
+
     <button onclick="freezeMoment()">Fånga Nuet</button>
-    <p style="font-size: 0.8rem; color: #999; margin-top: 1.5rem;">
-        Slumpen baseras på millisekunden då du trycker.
+    
+    <p class="note">
+        Slumpen förankras i nuet via millisekunder från UTC-epoken.
     </p>
 </div>
 
-<div style="margin-bottom: 1.5rem; display: flex; gap: 10px; justify-content: center;">
-    <div>
-        <label style="display:block; font-size: 0.7rem; color: #666;">Min</label>
-        <input type="number" id="min-val" value="1" style="width: 50px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-    </div>
-    <div>
-        <label style="display:block; font-size: 0.7rem; color: #666;">Max</label>
-        <input type="number" id="max-val" value="64" style="width: 50px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
-    </div>
-</div>
-
 <script>
-    // Uppdaterad freezeMoment funktion
+    // Robust klocka som startar direkt
+    function startClock() {
+        const clockEl = document.getElementById('utc-clock');
+        function tick() {
+            clockEl.innerText = "UTC: " + Date.now();
+            requestAnimationFrame(tick);
+        }
+        tick();
+    }
+    
+    // Kör klockan så fort sidan laddats
+    window.onload = startClock;
+
     function freezeMoment() {
         const now = Date.now();
         const min = parseInt(document.getElementById('min-val').value) || 1;
-        const max = parseInt(document.getElementById('max-val').value) || 100;
+        const max = parseInt(document.getElementById('max-val').value) || 64;
         
-        // Räkna ut omfånget (t.ex. 1 till 64 ger omfång 64)
         const range = max - min + 1;
         
         if (range <= 0) {
-            alert("Max måste vara större än Min!");
+            alert("Max måste vara högre än Min.");
             return;
         }
 
+        // Logiken bakom divinationen
         const randomNumber = (now % range) + min;
         
         document.getElementById('result').innerText = randomNumber;
-        console.log("Fångat vid UTC:", now, "med intervall:", min, "-", max);
+        console.log("Moment fruset vid:", now);
     }
 </script>
-
 
 </body>
 </html>
