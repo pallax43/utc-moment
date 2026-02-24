@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTC Nuet-Generator</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f0f0f0; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 80%; max-width: 400px; }
+        .utc-display { font-family: monospace; color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+        .result { font-size: 3rem; font-weight: bold; color: #2c3e50; margin: 1rem 0; }
+        button { background: #3498db; color: white; border: none; padding: 1rem 2rem; border-radius: 0.5rem; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; }
+        button:active { background: #2980b9; transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="utc-clock" class="utc-display">Laddar UTC...</div>
+    <div id="result" class="result">?</div>
+    <button onclick="freezeMoment()">Fånga Nuet</button>
+    <p style="font-size: 0.8rem; color: #999; margin-top: 1.5rem;">
+        Slumpen baseras på millisekunden då du trycker.
+    </p>
+</div>
+
+<script>
+    // Uppdatera klockan varje millisekund för att visualisera flödet
+    function updateClock() {
+        document.getElementById('utc-clock').innerText = "UTC: " + Date.now();
+        requestAnimationFrame(updateClock);
+    }
+    updateClock();
+
+    function freezeMoment() {
+        const now = Date.now();
+        // Vi använder modulo (%) för att få ett tal mellan 1 och 100
+        const randomNumber = (now % 100) + 1;
+        
+        document.getElementById('result').innerText = randomNumber;
+        console.log("Fångat vid UTC:", now);
+    }
+</script>
+
+</body>
+</html>
